@@ -2,7 +2,8 @@
 import React from "react";
 // -- Импорт PropTypes
 import PropTypes from "prop-types";
-import Todoitem from "./todoitem";
+import TodoItem from "./TodoItem";
+
 // -- Выносим стили в отдельный элемент
 const styleUL = {
 	// -- Название тега, для которого будем применять стили. Тег обявляется в виде объекта. Свойства пишется в виде camel-case. Параметры свойств пишутся в кавычках
@@ -12,18 +13,18 @@ const styleUL = {
 };
 
 //! -- Правило 2: Всегда нужно что-то экспортировать наружу
-function Todolist(props) {
+function TodoList(props) {
 	return (
 		<ul style={styleUL.ul}>
 			{/* -- todos необходимо валидировать */}
 			{props.todos.map((item, index) => {
 				return (
-					<Todoitem
+					<TodoItem
 						todo={item}
 						key={item.id}
 						index={index}
 						onChange={props.onToggle}
-					></Todoitem>
+					></TodoItem>
 				);
 			})}
 		</ul>
@@ -32,8 +33,8 @@ function Todolist(props) {
 
 // -- Валидация
 // -- PropTypes предоставляет ряд валидаторов, которые могут использоваться для проверки, что получаемые данные корректны
-Todolist.propTypes = {
+TodoList.propTypes = {
 	todos: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-export default Todolist;
+export default TodoList;

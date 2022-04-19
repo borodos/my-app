@@ -18,10 +18,18 @@ code {
 	width: 600px;
 }
 
-.main_container {
+.todo-item {
 	display: flex;
-	flex-direction: column;
-	height: 500px;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.5rem 1rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	margin-top: 0.5rem;
+}
+
+.input-checkbox {
+	margin-right: 1rem;
 }
 
 .rm {
@@ -29,15 +37,9 @@ code {
 	border-radius: 50%;
 	color: white;
 	border: none;
+	cursor: pointer;
 }
 
-/* ul {
-	display: flex;
-	align-items: center;
-	list-style: none;
-	justify-content: flex-start;
+.done {
+	text-decoration: line-through;
 }
-
-li {
-	margin-right: 20px;
-} */
