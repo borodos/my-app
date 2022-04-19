@@ -1,24 +1,39 @@
-// -- Всегда должны импортировать React
+//! -- Правило 1: Всегда нужно импортировать React
 import React from "react";
-
-// -- Стили
-const styles = {
+// -- Импорт PropTypes
+import PropTypes from "prop-types";
+import Todoitem from "./todoitem";
+// -- Выносим стили в отдельный элемент
+const styleUL = {
+	// -- Название тега, для которого будем применять стили. Тег обявляется в виде объекта. Свойства пишется в виде camel-case. Параметры свойств пишутся в кавычках
 	ul: {
-		// -- В параметрах стилей дефис убирается, а следующее слово пишется с большой буквы
 		listStyle: "none",
-		margin: 0,
-		padding: 0,
 	},
 };
-// -- props - это обект, у которого есть ключ todos
-export default function Todolist(props) {
-	return (
-		<ul style={styles.ul}>
-			{/* -- Фигурные скобки говорят React, что будем работать с JavaScript */}
 
-			{props.Todos.map((todo) => {
-				return <li>{todo.title}</li>;
+//! -- Правило 2: Всегда нужно что-то экспортировать наружу
+function Todolist(props) {
+	return (
+		<ul style={styleUL.ul}>
+			{/* -- todos необходимо валидировать */}
+			{props.todos.map((item, index) => {
+				return (
+					<Todoitem
+						todo={item}
+						key={item.id}
+						index={index}
+						onChange={props.onToggle}
+					></Todoitem>
+				);
 			})}
 		</ul>
 	);
 }
+
+// -- Валидация
+// -- PropTypes предоставляет ряд валидаторов, которые могут использоваться для проверки, что получаемые данные корректны
+Todolist.propTypes = {
+	todos: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
+
+export default Todolist;
