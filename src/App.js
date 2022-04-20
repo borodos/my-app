@@ -1,6 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TodoList from "./Todo/TodoList";
 import Context from "./context";
+import { Loader } from "./Loader";
+
+// -- Загрузка компонента отдельно
+const AddTodo = React.lazy(
+	() =>
+		new Promise((resolve) => {
+			setTimeout(() => {
+				resolve(import("./Todo/AddTodo"));
+			}, 3000);
+		})
+);
 
 // -- Это React-компонент, потому что она получает данные в одном объекте («пропсы») в качестве параметра и возвращает React-элемент
 function App() {
@@ -10,18 +21,21 @@ function App() {
 	// -- useState() всегда возвращает массив из двух элементов:
 	// -- Первый элемент - само состояние (по умолчанию оно равно начальному состоянию)
 	// -- Второй элемент - функция, изменяющая состояние таким образом, чтобы React видел это измененние
-	const [todos, setTodos] = React.useState([
-		{ id: 1, completed: false, title: "Купить хлеб" },
-		{ id: 2, completed: false, title: "Купить масло" },
-		{ id: 3, completed: false, title: "Купить сахар" },
-	]);
+	const [todos, setTodos] = React.useState([]);
+	const [loading, setLoading] = React.useState(true);
 
-	const a = React.useState([
-		{ id: 1, completed: false, title: "Купить хлеб" },
-		{ id: 2, completed: false, title: "Купить масло" },
-		{ id: 3, completed: false, title: "Купить сахар" },
-	]);
-	console.log(a);
+	// -- Используем хук useEffect для запроса на сервер
+	useEffect(() => {
+		fetch("https://jsonplaceholder.typicode.com/todos?_limit=5")
+			.then((response) => response.json())
+			.then((todos) =>
+				setTimeout(() => {
+					setTodos(todos);
+					setLoading(false);
+				}, 2000)
+			);
+	}, []);
+
 	// -- Чтобы отобразить этот массив в элементе Todolist, в Todolist нужно отобразить, какие свойства мы будем принимать
 	// Для этого можно придумать название свойства, которого будем принимать, например todos, далее в качестве значения этого свойства в фигурных скобках указываем JS-элемент
 	// Строка 17
@@ -41,13 +55,33 @@ function App() {
 		setTodos(todos.filter((todo) => todo.id !== id));
 	}
 
+	function addTodo(title) {
+		setTodos(
+			todos.concat([
+				{
+					title: title,
+					id: Date.now(),
+					completed: false,
+				},
+			])
+		);
+	}
+
 	return (
 		// -- С помощью Context мы можем передавать функции
 		// -- Если в объекте ключ и значение совпадают, то можно записать так - removeTodo
 		<Context.Provider value={{ removeTodo: removeTodo }}>
 			<div className="wrapper">
 				<h1>React Tutorial</h1>
-				<TodoList todos={todos} onToggle={toggleTodo} />
+				<React.Suspense fallback={<p>Loading...</p>}>
+					<AddTodo onCreate={addTodo} />
+				</React.Suspense>
+				{loading && <Loader />}
+				{todos.length ? (
+					<TodoList todos={todos} onToggle={toggleTodo} />
+				) : loading ? null : (
+					<p>No todos!</p>
+				)}
 			</div>
 		</Context.Provider>
 	);
